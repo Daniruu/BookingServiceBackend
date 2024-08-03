@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "QpeLNxMmB0RrkO79NKTcvuJtf1MLeeauRAp/fM7lho0=",
+  "Source": "BookingServiceBackend",
+  "BasePath": "_content/BookingServiceBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
