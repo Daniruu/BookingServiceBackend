@@ -111,3 +111,4 @@ C:\Users\danil\repos\BookingServiceBackend\BookingServiceBackend\bin\Debug\net8.
 C:\Users\danil\repos\BookingServiceBackend\BookingServiceBackend\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\danil\repos\BookingServiceBackend\BookingServiceBackend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\danil\repos\BookingServiceBackend\BookingServiceBackend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\danil\repos\BookingServiceBackend\BookingServiceBackend\bin\Debug\net8.0\NodaTime.dll

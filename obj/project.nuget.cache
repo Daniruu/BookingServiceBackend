@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2tt57ERnhM8=",
+  "dgSpecHash": "l2rs10YajFY=",
   "success": true,
   "projectFilePath": "C:\\Users\\danil\\repos\\BookingServiceBackend\\BookingServiceBackend\\BookingServiceBackend.csproj",
   "expectedPackageFiles": [
@@ -37,6 +37,7 @@
     "C:\\Users\\danil\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.0.1\\microsoft.identitymodel.tokens.8.0.1.nupkg.sha512",
     "C:\\Users\\danil\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
     "C:\\Users\\danil\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\danil\\.nuget\\packages\\nodatime\\3.1.12\\nodatime.3.1.12.nupkg.sha512",
     "C:\\Users\\danil\\.nuget\\packages\\npgsql\\8.0.3\\npgsql.8.0.3.nupkg.sha512",
     "C:\\Users\\danil\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.4\\npgsql.entityframeworkcore.postgresql.8.0.4.nupkg.sha512",
     "C:\\Users\\danil\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",

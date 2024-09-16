@@ -27,23 +27,31 @@ namespace BookingServiceBackend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto request)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-            {
-                return BadRequest("Użytkownik z takim adresem Email już istnieje.");
+            try
+            {    
+                if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+                {
+                    return BadRequest("Użytkownik z takim adresem Email już istnieje.");
+                }
+
+                var user = new User
+                {
+                    Email = request.Email,
+                    Password = request.Password,
+                    FirstName = request.FirstName,
+                    SecondName = request.SecondName,
+                    PhoneNumber = request.PhoneNumber
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Ok("Użytkownik poprawnie zarejestrowany.");
             }
-
-            var user = new User
+            catch (Exception ex)
             {
-                Email = request.Email,
-                Password = request.Password,
-                UserName = request.UserName,
-                PhoneNumber = request.PhoneNumber
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("Użytkownik poprawnie zarejestrowany.");
+                return BadRequest($"Wystąpił bąd podczas rejestracji: {ex.Message} - {ex.InnerException?.Message}");
+            }
         }
 
         [HttpPost("login")]
@@ -113,8 +121,7 @@ namespace BookingServiceBackend.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -146,7 +153,7 @@ namespace BookingServiceBackend.Controllers
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = false, // Игнорировать срок действия токена
+                ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = _configuration["Jwt:Issuer"],
                 ValidAudience = _configuration["Jwt:Audience"],
@@ -168,7 +175,8 @@ namespace BookingServiceBackend.Controllers
         {
             public string Email { get; set; }
             public string Password { get; set; }
-            public string UserName { get; set; }
+            public string FirstName { get; set; }
+            public string SecondName { get; set; }
             public string PhoneNumber { get; set; }
         }
 

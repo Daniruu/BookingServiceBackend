@@ -16,5 +16,7 @@ namespace BookingServiceBackend.Models
 
         [Required]
         public string Status { get; set; }
+
+        public Service Service { get; set; }
     }
 }

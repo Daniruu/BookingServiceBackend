@@ -9,6 +9,8 @@ namespace BookingServiceBackend.Models
 
         public int EmployeeId { get; set; }
 
+        public int BusinessId {  get; set; }
+
         [Required]
         public string Name { get; set; }
 
@@ -20,5 +22,13 @@ namespace BookingServiceBackend.Models
 
         [Required]
         public int Duration {  get; set; }
+
+        public bool IsFeatured { get; set; }
+
+        public string Group { get; set; }
+
+        public Business Business { get; set; }
+
+        public Employee Employee { get; set; }
     }
 }

@@ -11,6 +11,8 @@ namespace BookingServiceBackend.Data
         public DbSet<Business> Businesses { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Service> Services { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<DailyWorkingHours> WorkingHours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,12 +22,27 @@ namespace BookingServiceBackend.Data
                 .OwnsOne(b => b.Address);
 
             modelBuilder.Entity<Business>()
-                .HasMany(b => b.WorkingHours)
-                .WithOne()
-                .HasForeignKey("BusinessId");
+                .HasMany(b => b.WeeklyWorkingHours)
+                .WithOne(wh => wh.Business)
+                .HasForeignKey(wh => wh.BusinessId);
 
-            modelBuilder.Entity<WorkingHours>()
-                .HasKey(wh => new { wh.BusinessId, wh.Day });
+            modelBuilder.Entity<Business>()
+                .HasMany(b => b.Employees)
+                .WithOne(e => e.Business)
+                .HasForeignKey(e => e.BusinessId);
+
+            modelBuilder.Entity<Business>()
+                .HasMany(b => b.Services)
+                .WithOne(s => s.Business)
+                .HasForeignKey(s => s.BusinessId);
+
+            modelBuilder.Entity<DailyWorkingHours>()
+                .HasKey(wh => wh.Id);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Service)
+                .WithMany()
+                .HasForeignKey(r => r.ServiceId);
         }
     }
 }

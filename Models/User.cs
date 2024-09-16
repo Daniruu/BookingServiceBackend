@@ -15,12 +15,15 @@ namespace BookingServiceBackend.Models
         public string Password { get; set; }
 
         [Required]
-        public string UserName { get; set; }
+        public string FirstName { get; set; }
+
+        [Required]
+        public string SecondName { get; set; }
 
         [Required]
         public string PhoneNumber { get; set; }
 
-        public string RefreshToken {  get; set; }
+        public string? RefreshToken {  get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
     }
 }

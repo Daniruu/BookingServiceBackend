@@ -14,6 +14,14 @@ namespace BookingServiceBackend.Models
         public string Category {  get; set; }
 
         [Required]
+        public string Nip { get; set; }
+
+        [Required]
+        public string Regon {  get; set; }
+
+        public string Krs { get; set; }
+
+        [Required]
         public string Name { get; set; }
 
         [Required]
@@ -21,32 +29,16 @@ namespace BookingServiceBackend.Models
         public string Email { get; set; }
 
         [Required]
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        [Required]
         public Address Address { get; set; }
 
-        [Required]
-        [Phone]
-        public string PhoneNumber {  get; set; }
+        public ICollection<DailyWorkingHours> WeeklyWorkingHours { get; set; }
 
-        [Required]
-        public ICollection<WorkingHours> WorkingHours { get; set; } = new List<WorkingHours>();
-    }
+        public ICollection<Employee> Employees { get; set; }
 
-    public class Address
-    {
-        public string Region { get; set; }
-        public string PostalCode { get; set; }
-        public string Country { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
-        public string BuildingNumber { get; set; }
-        public string RoomNumber { get; set; }
-    }
-
-    public class WorkingHours
-    {
-        public int BusinessId {  get; set; }
-        public DayOfWeek Day { get; set; }
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
+        public ICollection<Service> Services { get; set; }
     }
 }

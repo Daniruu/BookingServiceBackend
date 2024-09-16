@@ -38,11 +38,23 @@ namespace BookingServiceBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Krs")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Nip")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Regon")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -52,6 +64,35 @@ namespace BookingServiceBackend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("BookingServiceBackend.Models.DailyWorkingHours", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EndTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("WorkingHours");
                 });
 
             modelBuilder.Entity("BookingServiceBackend.Models.Employee", b =>
@@ -69,13 +110,43 @@ namespace BookingServiceBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Position")
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("BookingServiceBackend.Models.Reservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("BookingServiceBackend.Models.Service", b =>
@@ -85,6 +156,9 @@ namespace BookingServiceBackend.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -96,6 +170,13 @@ namespace BookingServiceBackend.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -104,6 +185,10 @@ namespace BookingServiceBackend.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Services");
                 });
@@ -120,6 +205,10 @@ namespace BookingServiceBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
@@ -129,40 +218,18 @@ namespace BookingServiceBackend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("RefreshToken")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("SecondName")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("BookingServiceBackend.Models.WorkingHours", b =>
-                {
-                    b.Property<int>("BusinessId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("EndTime")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("StartTime")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("BusinessId", "Day");
-
-                    b.ToTable("WorkingHours");
                 });
 
             modelBuilder.Entity("BookingServiceBackend.Models.Business", b =>
@@ -177,10 +244,6 @@ namespace BookingServiceBackend.Migrations
                                 .HasColumnType("text");
 
                             b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Country")
                                 .IsRequired()
                                 .HasColumnType("text");
 
@@ -212,18 +275,65 @@ namespace BookingServiceBackend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookingServiceBackend.Models.WorkingHours", b =>
+            modelBuilder.Entity("BookingServiceBackend.Models.DailyWorkingHours", b =>
                 {
-                    b.HasOne("BookingServiceBackend.Models.Business", null)
-                        .WithMany("WorkingHours")
+                    b.HasOne("BookingServiceBackend.Models.Business", "Business")
+                        .WithMany("WeeklyWorkingHours")
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("BookingServiceBackend.Models.Employee", b =>
+                {
+                    b.HasOne("BookingServiceBackend.Models.Business", "Business")
+                        .WithMany("Employees")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("BookingServiceBackend.Models.Reservation", b =>
+                {
+                    b.HasOne("BookingServiceBackend.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("BookingServiceBackend.Models.Service", b =>
+                {
+                    b.HasOne("BookingServiceBackend.Models.Business", "Business")
+                        .WithMany("Services")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingServiceBackend.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("BookingServiceBackend.Models.Business", b =>
                 {
-                    b.Navigation("WorkingHours");
+                    b.Navigation("Employees");
+
+                    b.Navigation("Services");
+
+                    b.Navigation("WeeklyWorkingHours");
                 });
 #pragma warning restore 612, 618
         }

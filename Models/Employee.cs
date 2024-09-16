@@ -12,6 +12,8 @@ namespace BookingServiceBackend.Models
         public string Name { get; set; }
 
         [Required]
-        public string Position { get; set; }
+        public string Role { get; set; }
+
+        public Business Business { get; set; }
     }
 }

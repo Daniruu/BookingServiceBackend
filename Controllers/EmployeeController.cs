@@ -19,102 +19,161 @@ namespace BookingServiceBackend.Controllers
             _context = context;
         }
 
-        [HttpPost]
+        [HttpPost("{businessId}")]
         [Authorize]
-        public async Task<IActionResult> AddEmployee(EmployeeDto request)
+        public async Task<IActionResult> AddEmployee(int businessId, [FromBody] EmployeeDto request)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var business = await _context.Businesses.FirstOrDefaultAsync(b => b.UserId == userId);
-
-            if (business == null) 
+            try
             {
-                return BadRequest("Business not found for the current user.");
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                {
+                    return Unauthorized("You don't have access");
+                }
+                var userId = int.Parse(userIdClaim);
+
+                var business = await _context.Businesses.FirstOrDefaultAsync(b => b.Id == businessId);
+
+                if (business == null)
+                {
+                    return BadRequest("Business not found.");
+                }
+
+                if (business.UserId != userId)
+                {
+                    return Forbid("You don't have access.");
+                }
+
+                if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Role))
+                {
+                    return BadRequest("Employee name and position cannot be empty.");
+                }
+
+                var employee = new Employee
+                {
+                    BusinessId = business.Id,
+                    Name = request.Name,
+                    Role = request.Role
+                };
+
+                _context.Employees.Add(employee);
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Employee added successfully." });
             }
-
-            if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Position))
+            catch (Exception ex)
             {
-                return BadRequest("Employee name and position cannot be empty");
+                return StatusCode(500, ex.Message);
             }
-
-            var employee = new Employee
-            {
-                BusinessId = business.Id,
-                Name = request.Name,
-                Position = request.Position
-            };
-
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "Employee added successfully." });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{employeeId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateEmployee(int id, EmployeeDto request)
+        public async Task<IActionResult> UpdateEmployee(int employeeId, EmployeeDto request)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var business = await _context.Businesses.FirstOrDefaultAsync(b => b.UserId == userId);
-
-            if (business == null)
+            try
             {
-                return BadRequest("Business not found for the current user.");
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                {
+                    return Unauthorized("You don't have access");
+                }
+                var userId = int.Parse(userIdClaim);
+
+                var business = await _context.Businesses.FirstOrDefaultAsync(b => b.UserId == userId);
+
+                if (business == null)
+                {
+                    return BadRequest("Business not found.");
+                }
+
+                if (business.UserId != userId)
+                {
+                    return Forbid("You don't have access.");
+                }
+
+                var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employeeId && e.BusinessId == business.Id);
+
+                if (employee == null)
+                {
+                    return NotFound("Employee not found.");
+                }
+
+                employee.Name = request.Name;
+                employee.Role = request.Role;
+
+                _context.Employees.Update(employee);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Employee updated successfully" });
             }
-
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id && e.BusinessId == business.Id);
-
-            if (employee == null)
+            catch (Exception ex)
             {
-                return NotFound("Employee not found.");
+                return StatusCode(500, ex.Message);
             }
-
-            employee.Name = request.Name;
-            employee.Position = request.Position;
-
-            _context.Employees.Update(employee);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Employee updated successfully" });
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{employeeId}")]
         [Authorize]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        public async Task<IActionResult> DeleteEmployee(int employeeId)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var business = await _context.Businesses.FirstOrDefaultAsync(b => b.UserId == userId);
-
-            if (business == null)
+            try
             {
-                return BadRequest("Business not found for the current user.");
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                {
+                    return Unauthorized("You don't have access");
+                }
+                var userId = int.Parse(userIdClaim);
+
+                var business = await _context.Businesses.FirstOrDefaultAsync(b => b.UserId == userId);
+
+                if (business == null)
+                {
+                    return BadRequest("Business not found.");
+                }
+
+                var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employeeId && e.BusinessId == business.Id);
+
+                if (employee == null)
+                {
+                    return NotFound("Employee not found.");
+                }
+
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Employee deleted successfully." });
             }
-
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id && e.BusinessId == business.Id);
-
-            if (employee == null)
+            catch (Exception ex)
             {
-                return NotFound("Employee not found.");
+                return StatusCode(500, ex.Message);
             }
-
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Employee deleted successfully" });
         }
 
-        [HttpGet("by-bussiness/{businessId}")]
+        [HttpGet("{businessId}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetEmployeeByBusiness(int businessId)
+        public async Task<IActionResult> GetEmployeeByBusinessId(int businessId)
         {
-            var employees = await _context.Employees
-                .Where(e => e.BusinessId == businessId)
-                .ToListAsync();
-
-            if (employees == null || employees.Count == 0)
+            try
             {
-                return NotFound();
-            }
+                var employees = await _context.Employees
+                    .Where(e => e.BusinessId == businessId)
+                    .ToListAsync();
 
-            return Ok(employees);
+                if (employees == null || employees.Count == 0)
+                {
+                    return NotFound("Employees not found.");
+                }
+
+                return Ok(employees);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         public class EmployeeDto
@@ -122,7 +181,7 @@ namespace BookingServiceBackend.Controllers
             [Required]
             public string Name { get; set; }
             [Required]
-            public string Position { get; set; }
+            public string Role { get; set; }
         }
     }
 }
